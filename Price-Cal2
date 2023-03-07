@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Price Calculator</title>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<style>
+		/* Add some basic styling */
+		table, td, th {
+			border: 1px solid black;
+			padding: 10px;
+		}
+		button {
+			margin-top: 10px;
+		}
+	</style>
+</head>
+<body>
+	<h1>Price Calculator</h1>
+	<form>
+		<table id="priceTable">
+			<thead>
+				<tr>
+					<th>Item</th>
+					<th>Quantity</th>
+					<th>Price</th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr>
+					<td><input type="text" name="item" /></td>
+					<td><input type="number" name="quantity" /></td>
+					<td><input type="number" name="price" /></td>
+				</tr>
+			</tbody>
+		</table>
+		<button type="button" onclick="addRow()">Add Row</button>
+		<p>Total Price: $<span id="totalPrice">0</span></p>
+		<button type="button" onclick="removeRow()">Remove Last Row</button>
+	</form>
+	
+	<script>
+		// Function to calculate the total price
+		function calculateTotal() {
+			// Get all the rows in the table
+			var rows = document.querySelectorAll('#priceTable tbody tr');
+			var totalPrice = 0;
+			// Loop through each row and calculate the subtotal and add it to the total price
+			for (var i = 0; i < rows.length; i++) {
+				var quantity = parseFloat(rows[i].querySelector('input[name="quantity"]').value);
+				var price = parseFloat(rows[i].querySelector('input[name="price"]').value);
+				if (isNaN(quantity) || isNaN(price)) {
+					continue;
+				}
+				var subtotal = quantity * price;
+				totalPrice += subtotal;
+			}
+			// Update the total price element
+			document.getElementById('totalPrice').textContent = totalPrice.toFixed(2);
+		}
+
+		// Function to add a new row to the table
+		function addRow() {
+			var tableBody = document.querySelector('#priceTable tbody');
+			var newRow = document.createElement('tr');
+			newRow.innerHTML = `
+				<td><input type="text" name="item" /></td>
+				<td><input type="number" name="quantity" /></td>
+				<td><input type="number" name="price" /></td>
+			`;
+			tableBody.appendChild(newRow);
+		}
+
+		// Function to remove the last row from the table
+		function removeRow() {
+			var tableBody = document.querySelector('#priceTable tbody');
+			var rows = tableBody.querySelectorAll('tr');
+			if (rows.length > 1) {
+				tableBody.removeChild(rows[rows.length - 1]);
+				calculateTotal();
+			}
+		}
+
+		// Add event listeners to the inputs to calculate the total price automatically
+		var inputs = document.querySelectorAll('#priceTable input');
+		for (var i = 0; i < inputs.length; i++) {
+			inputs[i].addEventListener('input', calculateTotal);
+		}
+	</script>
+</body>
+</html>
